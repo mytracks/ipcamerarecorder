@@ -1,0 +1,14 @@
+FROM ubuntu:18.04
+LABEL MAINTAINER "Dirk Stichling <mytracks@mytracks4mac.com>"
+
+RUN apt-get update && apt-get install -y \
+        ffmpeg \
+        && rm -rf /var/lib/apt/lists/*
+
+ENV USER user
+ENV PASSWORD password
+ENV IP 192.168.1.1
+
+COPY start.sh /
+
+CMD /start.sh
