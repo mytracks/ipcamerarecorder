@@ -4,10 +4,12 @@ A Docker image for recording audio and video streams of an IP based  surveillanc
 
 ## Usage
 
-You need to specify at least the IP address, user name and password of the IP camera and a volume to store the recorded data. Then you can start the container like this:
+You need to specify at least the RTSP URL of the IP camera and a volume to store the recorded data. You may need to read to documentation of your IP camera in order to find the correct URL.
+
+Then you can start the container like this:
 
 ```bash
-docker run -d --name ipcamerarecorder1 -e USER=admin -e PASSWORD=my-secret -e IP=192.168.178.42 -v /my/local/storage_path:/record --restart unless-stopped mytracks/ipcamerarecorder
+docker run -d -e URL="rtsp://user:password@192.168.1.1/live/ch0" -v /my/local/storage_path:/record --restart unless-stopped mytracks/ipcamerarecorder
 ```
 
 ## Configuration
@@ -16,12 +18,11 @@ You can configure the container using the following environment variables:
 
 | Environment Variable  | Description | Default Value |
 | ------------- | ------------- | ------------- |
-| `IP`  | The IP address or DNS name of the camera | `192.168.1.1` |
-| `USER`  | The user name  | `user` |
-| `PASSWORD`  | The user's password  | `password` |
+| `URL`  | The RTSP URL used to connect to the camera. This has to be a [valid RTSP URL for ffmpeg](http://ffmpeg.org/ffmpeg-protocols.html#rtsp). | `rtsp://user:password@192.168.1.1/live/ch0` |
 | `KEEP_DAYS`  | The numbers of days to keep the recorded files.  | `14` |
 | `RECORD_LENGTH_SECONDS`  | The length of each individual recording in seconds  | `3600` |
 | `FRAMERATE`  | The frame rate for the recording  | `4` |
+| `FFMPEG_ARGS`  | Additional command line arguments for ffmpeg.  |  |
 
 ## Some Details
 
@@ -49,12 +50,8 @@ spec:
   - name: ipcamerarecorder
     image: mytracks/ipcamerarecorder
     env:
-    - name: USER
-      value: admin
-    - name: PASSWORD
-      value: my-secret
-    - name: IP
-      value: "192.168.178.42"
+    - name: URL
+      value: "rtsp://user:password@192.168.1.1/live/ch0"
     volumeMounts:
       - mountPath: /record
         name: record
