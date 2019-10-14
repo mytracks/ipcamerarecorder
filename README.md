@@ -12,6 +12,8 @@ Then you can start the container like this:
 docker run -d -e URL="rtsp://user:password@192.168.1.1/live/ch0" -v /my/local/storage_path:/record --restart unless-stopped mytracks/ipcamerarecorder
 ```
 
+The container will write *mp4* files to the volume mounted to `/record`. Therefore you may need to specify a user id with the correct permissions. As a default the container is executed using user id 1000.
+
 ## Configuration
 
 You can configure the container using the following environment variables:
@@ -44,6 +46,9 @@ kind: Pod
 metadata:
   name: ipcamerarecorder1
 spec:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
   restartPolicy: Always
   hostNetwork: true
   containers:
